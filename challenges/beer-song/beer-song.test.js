@@ -41,7 +41,7 @@ describe("Beer Song", () => {
     expect(BeerSong.verse(0)).toBe(expected);
   });
 
-  xtest("a couple of verses", () => {
+  test("a couple of verses", () => {
     let expected = "99 bottles of beer on the wall, 99 bottles of beer.\n" +
                    "Take one down and pass it around, 98 bottles of beer " +
                    "on the wall.\n\n98 bottles of beer on the wall, " +
@@ -51,7 +51,7 @@ describe("Beer Song", () => {
     expect(BeerSong.verses(99, 98)).toBe(expected);
   });
 
-  xtest("a few verses", () => {
+  test("a few verses", () => {
     let expected = "2 bottles of beer on the wall, 2 bottles of beer.\n" +
                    "Take one down and pass it around, 1 bottle of beer " +
                    "on the wall.\n\n1 bottle of beer on the wall, 1 " +
@@ -64,7 +64,7 @@ describe("Beer Song", () => {
     expect(BeerSong.verses(2, 0)).toBe(expected);
   });
 
-  xtest("the whole song", () => {
+  test("the whole song", () => {
     let expected = wholeSong();
     expect(BeerSong.lyrics()).toBe(expected);
   });
