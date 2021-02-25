@@ -87,62 +87,6 @@ generateDisplayName: method that generates a 16 character sequence. It's used as
 
 */
 //---------------------------Code with Intent------------------------
-// const Account = {
-
-
-
-//   init(email, password, firstName, lastName) {
-//     this.email = email;
-//     this.password = password;
-//     this.firstName = firstName;
-//     this.lastName = lastName;
-//     this.displayName = this._generateDisplayName();
-
-// function reanonymize() {
-
-// }
-
-// function resetPassword() {
-
-// }
-
-// function firstName(inputPassword) {
-
-// } 
-
-// function lastName() {
-
-// }
-
-// function email() {
-
-// }
-
-// function getPassword() {
-
-// }
-
-
-//   },
-
-
-
-// _generateDisplayName() {
-//   const ALPHANUMERIC = "abcdefghijklmnopqrstuvwxyz0123456789";
-//   const MAX_LENGTH_OF_SEQUENCE = 16;
-//   let generatedSequence = "";
-
-//   for (let number = 0; number < MAX_LENGTH_OF_SEQUENCE; number++) {
-//     generatedSequence += ALPHANUMERIC[this._getRandomNumber(0, ALPHANUMERIC.length - 1)];
-//   }
-//   return generatedSequence;
-// },
-
-// _getRandomNumber(min, max) {
-//   return Math.floor(Math.random() * (max - min + 1) + min);
-// },
-// };
-
 let Account = (function () {
   let userEmail;
   let userPassword;
@@ -226,22 +170,33 @@ let Account = (function () {
 // can this be transformed into a factory function?
 
 
+let fooBar = Object.create(Account).init('foo@bar.com', '123456', 'foo', 'bar');
+let barFoo = Object.create(Account).init('bar@foo.com', '789101', 'bar', 'foo');
 
+console.log(fooBar);
+console.log(barFoo);
+
+console.log(fooBar.email(123456));
+// console.log(barFoo.email(789101));
+
+// console.log(fooBar.email('789101'));
+// 'bar@foo.com'
+// console.log(fooBar.email('123456'));
+// 'Invalid Password'
 
 
 
 
 // console.log(Account);
-let fooBar = Object.create(Account).init('foo@bar.com', '123456', 'foo', 'bar');
-// console.log(fooBar);
-console.log(fooBar.firstName);                        // returns the firstName function
-console.log(fooBar.email);                         // returns the email function
-console.log(fooBar.firstName('123456'));              // logs 'foo'
-console.log(fooBar.firstName('abc'));              // logs 'Invalid Password'
-console.log(fooBar.displayName);                   // logs 16 character sequence
-console.log(fooBar.resetPassword('123', 'abc'))    // logs 'Invalid Password';
-console.log(fooBar.resetPassword('123456', 'abc')) // logs true
+// // console.log(fooBar);
+// console.log(fooBar.firstName);                        // returns the firstName function
+// console.log(fooBar.email);                         // returns the email function
+// console.log(fooBar.firstName('123456'));              // logs 'foo'
+// console.log(fooBar.firstName('abc'));              // logs 'Invalid Password'
+// console.log(fooBar.displayName);                   // logs 16 character sequence
+// console.log(fooBar.resetPassword('123', 'abc'))    // logs 'Invalid Password';
+// console.log(fooBar.resetPassword('123456', 'abc')) // logs true
 
-let displayName = fooBar.displayName;
-console.log(fooBar.reanonymize('abc'));                        // returns true
-console.log(displayName === fooBar.displayName);   // logs false
+// let displayName = fooBar.displayName;
+// console.log(fooBar.reanonymize('abc'));                        // returns true
+// console.log(displayName === fooBar.displayName);   // logs false
