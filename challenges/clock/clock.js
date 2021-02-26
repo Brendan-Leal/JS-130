@@ -108,7 +108,7 @@ EXAMPLE:
 
   toString INSTANCE method: returns the time as a string 
 
-  add INSTANCE method: adds X amount of minutes to the current time in the clock object
+  add INSTANCE method: adds X amount of minutes to the current time in the clock object, return a new clock object
   - Takes 1 arg minutesToAdd
     increment the currentMinutes by 1
       - if the currentMinutes is equal to 60
