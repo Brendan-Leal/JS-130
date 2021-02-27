@@ -204,9 +204,12 @@ class Clock {
   }  
 }
 
-let test1 = Clock.at(5,1)
-let test2 = Clock.at(5,23)
+let test1 = Clock.at(13,7).subtract(15);
+// let test2 = Clock.at(5,23)
 
-console.log(test1.isEqual(test2));
+// console.log(test1.isEqual(test2));
 
+
+
+console.log(test1.toString());
 module.exports = Clock;
