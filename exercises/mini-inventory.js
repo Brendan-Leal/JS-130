@@ -1,151 +1,169 @@
 "use strict";
 
-function Item(itemName, category, quantity, sku) {
-  this.itemName = itemName;
-  this.category = category;
-  this.quantity = quantity;
-  this.sku = sku;
+class Item {
+  constructor(itemName, category, quantity) {
+    if (this.isValid(itemName, category, quantity)) {
+      this.itemName = itemName;
+      this.category = category;
+      this.quantity = quantity;
+      this.sku = this.setSKU();
+    } else {
+      this.notValid = true;
+    }
+  }
+
+  setSKU() {
+    let sku = "";
+    let index = 0;
+    let nameOfItem = this.itemName.replace(/\s/, "");
+
+    while (sku.length < 3) {
+      sku += nameOfItem[index];
+      index += 1;
+    }
+
+    index = 0;
+
+    while (sku.length < 5) {
+      sku += this.category[index];
+      index += 1;
+    }
+    return sku.toUpperCase();
+  }
+
+  isValid(itemName, category, quantity) {
+    let lengthOfItemName = itemName.replace(/\s/, "").length;
+    let isCategoryOneWord = category.split(" ").length === 1;
+
+    return lengthOfItemName >= 5 && isCategoryOneWord && Number.isInteger(quantity);
+  }
 }
 
-
-function createItemManager() {
+let ItemManager = (function () {
 
   return {
     items: [],
 
     create(itemName, category, quantity) {
-      if (this.isValidItem(itemName, category, quantity)) {
-        let sku = this.getSku(itemName, category);
-
-        this.items.push(new Item(itemName, category, quantity, sku));
-      } else {
-        return { notValid: true };
+      let item = new Item(itemName, category, quantity);
+      if (item.sku) {
+        this.items.push(item);
       }
+      return item;
     },
 
-    update() {
-
+    update(sku, obj) {
+      this.items.forEach(item => {
+        if (item.sku === sku) {
+          for (const key in obj) {
+            item[key] = obj[key];
+          }
+        }
+      });
     },
 
-    delete() {
+    delete(sku) {
+      let indexToDelete;
+      
+      this.items.forEach((item, index) => {
+        if (item.sku === sku) {
+          indexToDelete = index;
+        }
+      });
 
+      this.items.splice(indexToDelete, 1);
     },
+
 
     inStock() {
-
+      return this.items.filter(item => {
+        return item.quantity > 0;
+      });
     },
 
-    itemsInCategory() {
-
-    },
-
-    getSku(itemName, category) {
-      let tempName = itemName;
-
-      if (itemName.match(/\b^[a-z]*\b \b[a-z]*\b/)) {
-        tempName = itemName.split(" ").join("");
-      }
-
-      let firstThreeOfItemName = tempName.split("").filter((_, index) => index < 3);
-      let firstTwoOfCategory = category.split("").filter((_, index) => index < 2);
-
-      return firstThreeOfItemName.join("") + firstTwoOfCategory.join("");
-    },
-
-    isValidItem(itemName, category, quantity) {
-      return this.isValidItemName(itemName) &&
-        this.isValidcategory(category) &&
-        this.isValidQuatity(quantity);
-    },
-
-    isValidQuatity(quantity) {
-      return Number.isInteger(quantity);
-    },
-
-    isValidcategory(category) {
-      if (category.match(/\b^[a-z]{5,}$\b/)) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    isValidItemName(itemName) {
-      let itemNameWithNoSpaces = itemName.split(" ").join("");
-      return itemNameWithNoSpaces.length >= 5;
+    itemsInCategory(category) {
+      return this.items.map(item => {
+        if (item.category === category) {
+          return item.itemName;
+        }
+      }).join(", ");
     },
   };
+})();
 
-}
+let ReportManager = {
+  init(itemManager) {
+    this.items = itemManager;
+    return this;
+  },
 
-function createReportsManager() {
+  reportInStock() {
+    let itemsInStock = this.items.inStock();
+    return itemsInStock.map(item => {
+      return item.itemName;
+    }).join(", ");
+  },
 
-  return {
+  createReporter(sku) {
+    let specifiedItem; 
 
-    init(itemManager) {
-      
-    },
+    this.items.items.forEach(item => {
+      if (item.sku === sku) {
+        specifiedItem = item;
+      }
+    });
+    
+    return {
+      itemInfo() {
+        for (const key in specifiedItem) {
+          console.log(`${key}: ${specifiedItem[key]}`);
+        }
+      }
+    }
+  }
+};
 
-    createReporter() {
 
-    },
-
-    reportInStock() {
-
-    },
-
-  };
-
-}
-
-let ItemManager = createItemManager();
-let ReportManager = createReportsManager();
 
 ItemManager.create('basket ball', 'sports', 0);           // valid item
+ItemManager.create('asd', 'sports', 0);
 ItemManager.create('soccer ball', 'sports', 5);           // valid item
+ItemManager.create('football', 'sports');
 ItemManager.create('football', 'sports', 3);              // valid item
+ItemManager.create('kitchen pot', 'cooking items', 0);
 ItemManager.create('kitchen pot', 'cooking', 3);          // valid item
-// ItemManager.create('oh test', 'cooking', 3);
-
-// console.log(ItemManager.create('asd', 'sports', 0)); // Not valid because item name is too short
-// ItemManager.create('football', 'sports'); // Not valid because missing quatity
-// ItemManager.create('kitchen pot', 'cooking items', 0); // not valid because category name is not one word
-// // returns list with the 4 valid items
+// returns list with the 4 valid items
 // console.log(ItemManager.items);
 
 ReportManager.init(ItemManager);
-console.log(ReportManager);
-console.log(ItemManager);
+// // logs soccer ball,football,kitchen pot
+// console.log(ReportManager.reportInStock());
 
-// logs soccer ball,football,kitchen pot
-// ReportManager.reportInStock();
-
-// ItemManager.update('SOCSP', { quantity: 0 });
+ItemManager.update('SOCSP', { quantity: 0 });
 // // returns list with the item objects for football and kitchen pot
-// ItemManager.inStock();
-// // football,kitchen pot
-// ReportManager.reportInStock();
+// console.log(ItemManager.inStock());
+// football,kitchen pot
+// console.log(ReportManager.reportInStock());
 
-// // returns list with the item objects for basket ball, soccer ball, and football
-// ItemManager.itemsInCategory('sports');
+// returns list with the item objects for basket ball, soccer ball, and football
+// console.log(ItemManager.itemsInCategory('sports'));
 
-// ItemManager.delete('SOCSP');
+ItemManager.delete('SOCSP');
 // // returns list the remaining 3 valid items (soccer ball is removed from the list)
-// ItemManager.items;
+// console.log(ItemManager.items);
 
-// let kitchenPotReporter = ReportManager.createReporter('KITCO');
-// kitchenPotReporter.itemInfo();
+let kitchenPotReporter = ReportManager.createReporter('KITCO');
+kitchenPotReporter.itemInfo();
 // // logs
 // // skuCode: KITCO
 // // itemName: kitchen pot
 // // category: cooking
 // // quantity: 3
 
-// ItemManager.update('KITCO', { quantity: 10 });
-// kitchenPotReporter.itemInfo();
-
-// logs
-// skuCode: KITCO
-// itemName: kitchen pot
-// category: cooking
-// quantity: 10
+ItemManager.update('KITCO', { quantity: 10 });
+kitchenPotReporter.itemInfo();
+// // logs
+// // skuCode: KITCO
+// // itemName: kitchen pot
+// // category: cooking
+// // quantity: 10
